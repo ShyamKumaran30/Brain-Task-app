@@ -1,25 +1,28 @@
 version: 0.2
 
 phases:
-  pre_build:
-    commands:
-      - echo "Logging in to Amazon ECR..."
-      - aws --version
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 866945988845.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI=866945988845.dkr.ecr.us-east-1.amazonaws.com/brain-tasks-app
-      - IMAGE_TAG=latest
+  # pre_build:
+  #   commands:
+  #     - echo "Logging in to Amazon ECR..."
+  #     - aws --version
+  #     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 866945988845.dkr.ecr.us-east-1.amazonaws.com
+  #     - REPOSITORY_URI=866945988845.dkr.ecr.us-east-1.amazonaws.com/brain-tasks-app
+  #     - IMAGE_TAG=latest
 
   build:
     commands:
-      - echo "Building Docker image on $(date)"
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      # - echo "Building Docker image on $(date)"
+      # - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo "Skipping build, using existing image"
+      - printf '[{"name":"brain-tasks-app","imageUri":"866945988845.dkr.ecr.us-east-1.amazonaws.com/brain-tasks-app:latest"}]' > imagedefinitions.json
 
-  post_build:
-    commands:
-      - echo "Pushing Docker image to Amazon ECR..."
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Build and push completed successfully on $(date)"
+  # post_build:
+  #   commands:
+  #     - echo "Pushing Docker image to Amazon ECR..."
+  #     - docker push $REPOSITORY_URI:$IMAGE_TAG
+  #     - echo "Build and push completed successfully on $(date)"
 
 artifacts:
   files:
-    - '**/*'
+    - imagedefinitions.json
+    # - '**/*'
