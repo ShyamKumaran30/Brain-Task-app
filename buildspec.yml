@@ -25,4 +25,7 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
+    - appspec.yml
+    - scripts/**
+    - k8s/deployment.yaml
     # - '**/*'
