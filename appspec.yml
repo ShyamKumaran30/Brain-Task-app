@@ -1,0 +1,11 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service  # Keep generic for CodeDeploy EKS deployment
+      Properties:
+        TaskDefinition: ""    # Empty, since we deploy to EKS
+Hooks:
+  BeforeAllowTraffic:
+    - location: scripts/deploy.sh
+      timeout: 300
+      runas: root
