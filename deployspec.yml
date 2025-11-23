@@ -2,18 +2,24 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.11
     commands:
       - echo "Installing kubectl..."
       - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
+      - echo "kubectl version:"
+      - kubectl version --client
 
       - echo "Updating kubeconfig..."
+      # Make sure the AWS CLI uses the CodeBuild role
       - aws eks update-kubeconfig --name BrainTasksCluster --region us-east-1
 
   build:
     commands:
       - echo "Deploying to EKS..."
+      # Skip validation to avoid OpenAPI download errors inside CodeBuild
       - kubectl apply --validate=false -f k8s/deployment.yaml
       - kubectl apply -f k8s/service.yaml
 
