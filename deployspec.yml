@@ -1,31 +1,42 @@
 version: 0.2
 
+env:
+  variables:
+    CLUSTER_NAME: "BrainTasksCluster"
+    AWS_REGION: "us-east-1"
+    K8S_DEPLOYMENT_FILE: "k8s/deployment.yaml"
+
 phases:
   install:
     runtime-versions:
       python: 3.11
     commands:
-      - echo "WHO AM I?"
-      - aws sts get-caller-identity
       - echo "Installing kubectl..."
       - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
-      - echo "kubectl version:"
       - kubectl version --client
-      - echo "Updating kubeconfig..."
-      # Make sure the AWS CLI uses the CodeBuild role
-      - aws eks update-kubeconfig --name BrainTasksCluster --region us-east-1
-      - cat ~/.kube/config | head -n 20
-      - kubectl config current-context
+      - echo "Installing jq..."
+      - yum install -y jq || true
+
+  pre_build:
+    commands:
+      - echo "Updating kubeconfig for EKS..."
+      # Explicitly use the role CodeBuild is assuming
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION --role-arn arn:aws:iam::866945988845:role/service-role/EKS_CodeBuild_ServiceRole
+      - echo "Verifying kubectl access..."
+      - kubectl get nodes
 
   build:
     commands:
       - echo "Deploying to EKS..."
-      # Skip validation to avoid OpenAPI download errors inside CodeBuild
-      - kubectl apply --validate=false -f k8s/deployment.yaml
-      - kubectl apply -f k8s/service.yaml
+      - kubectl apply --validate=false -f $K8S_DEPLOYMENT_FILE
+      - kubectl rollout status deployment/<your-deployment-name> # Optional: wait for rollout
+
+  post_build:
+    commands:
+      - echo "Build completed successfully."
 
 artifacts:
   files:
-    - "**/*"
+    - '**/*'
