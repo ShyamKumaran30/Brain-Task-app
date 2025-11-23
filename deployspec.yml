@@ -11,10 +11,12 @@ phases:
       - mv kubectl /usr/local/bin/
       - echo "kubectl version:"
       - kubectl version --client
-
       - echo "Updating kubeconfig..."
       # Make sure the AWS CLI uses the CodeBuild role
       - aws eks update-kubeconfig --name BrainTasksCluster --region us-east-1
+      - cat ~/.kube/config | head -n 20
+      - kubectl config current-context
+      - kubectl cluster-info
 
   build:
     commands:
