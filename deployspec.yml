@@ -7,16 +7,17 @@ phases:
       - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
-
+      
       - echo "Updating kubeconfig..."
+      - aws eks update-kubeconfig --name BrainTasksCluster --region us-east-1
+
+      # Only if using AssumeRole
       - echo "Assuming EKS Admin Role..."
       - ROLE_ARN="arn:aws:iam::<ACCOUNT_ID>:role/EKSAdminRole"
       - CREDS=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name codebuild)
       - export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r '.Credentials.AccessKeyId')
       - export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r '.Credentials.SecretAccessKey')
       - export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r '.Credentials.SessionToken')
-      - echo "Updating kubeconfig..."
-      - aws eks update-kubeconfig --name BrainTasksCluster --region us-east-1
 
   build:
     commands:
