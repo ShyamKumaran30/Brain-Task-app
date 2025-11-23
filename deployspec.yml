@@ -23,7 +23,7 @@ phases:
     commands:
       - echo "Updating kubeconfig for EKS..."
       # Explicitly use the role CodeBuild is assuming
-      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION --role-arn arn:aws:iam::866945988845:role/service-role/EKS_CodeBuild_ServiceRole
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
       - echo "Verifying kubectl access..."
       - kubectl get nodes
 
