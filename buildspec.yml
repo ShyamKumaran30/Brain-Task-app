@@ -10,9 +10,11 @@ phases:
     commands:
       - echo "Logging in to Amazon ECR..."
       - aws --version
+      - docker --version
+      - echo "Authenticating to ECR..."
       - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI)
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - echo "Image Tag: $IMAGE_TAG"
+      - echo "Using image tag: $IMAGE_TAG"
 
   build:
     commands:
@@ -23,10 +25,11 @@ phases:
     commands:
       - echo "Pushing Docker image to ECR..."
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Creating deployment image definitions file..."
-      - printf '{"imageUri":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - echo "Creating imageDetail.json..."
+      - printf '{"imageUri":"%s"}' "$REPOSITORY_URI:$IMAGE_TAG" > imageDetail.json
+      - echo "Updating Kubernetes deployment image..."
       - sed -i "s|IMAGE_PLACEHOLDER|$REPOSITORY_URI:$IMAGE_TAG|g" k8s/deployment.yaml
-      - echo "Build completed successfully."
+      - echo "Build completed successfully!"
 
 artifacts:
   files:
