@@ -91,7 +91,8 @@ This setup enables **zero-downtime rolling updates** and fully automated deploym
 
 ##  Public Access
 
-After deployment, the application becomes accessible via an **AWS LoadBalancer DNS URL**.  
+After deployment, the application becomes accessible via an **AWS LoadBalancer DNS URL**
+http://a14f023ec69034f9c8b93f6109a82fd2-177865057.us-east-1.elb.amazonaws.com.  
 This URL updates automatically as the Kubernetes Service is recreated or replaced.
 
 ---
