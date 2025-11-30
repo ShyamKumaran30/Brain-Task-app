@@ -2,41 +2,29 @@ version: 0.2
 
 env:
   variables:
-    CLUSTER_NAME: "BrainTasksCluster"
+    CLUSTER_NAME: "brain-task-cluster"
     AWS_REGION: "us-east-1"
-    K8S_DEPLOYMENT_FILE: "k8s/deployment.yaml"
+    K8S_DIR: "k8s"
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.11
-    commands:
-      - echo "Installing kubectl..."
-      - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/
-      - kubectl version --client
-      - echo "Installing jq..."
-      - yum install -y jq || true
-
   pre_build:
     commands:
-      - echo "Updating kubeconfig for EKS..."
-      # Explicitly use the role CodeBuild is assuming
-      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
-      - echo "Verifying kubectl access..."
+      - echo "Configuring kubectl..."
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
       - kubectl get nodes
 
   build:
     commands:
-      - echo "Deploying to EKS..."
-      - kubectl apply --validate=false -f $K8S_DEPLOYMENT_FILE
-      - kubectl rollout status deployment/<your-deployment-name> # Optional: wait for rollout
+      - echo "Applying Kubernetes manifests..."
+      - kubectl apply -f $K8S_DIR/deployment.yaml
+      - kubectl apply -f $K8S_DIR/service.yaml
 
   post_build:
     commands:
-      - echo "Build completed successfully."
+      - echo "Deployment complete!"
+      - kubectl rollout status deployment/brain-task-app
+      - kubectl get svc
 
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
