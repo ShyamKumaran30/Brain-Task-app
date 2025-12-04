@@ -1,0 +1,47 @@
+version: 0.2
+
+env:
+  variables:
+    CLUSTER_NAME: "brain-tasks-eks"
+    REGION: "us-east-1"
+    ROLLOUT_NAME: "brain-task-app"
+    CONTAINER_NAME: "brain-task-app"
+    IMAGE_URI: "866945988845.dkr.ecr.us-east-1.amazonaws.com/brain-task-app"
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - curl -o kubectl-argo-rollouts.exe -L https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-windows-amd64.exe || true
+      - chmod +x kubectl-argo-rollouts.exe || true
+      - mv kubectl-argo-rollouts.exe /usr/local/bin/kubectl-argo-rollouts || true
+
+  pre_build:
+    commands:
+      - echo Logging in to ECR...
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $IMAGE_URI
+
+  build:
+    commands:
+      - echo Updating kubeconfig...
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION
+
+      - echo Deploying new image tag: $CODEBUILD_RESOLVED_SOURCE_VERSION
+      - NEW_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+      - FULL_IMAGE="$IMAGE_URI:$NEW_TAG"
+
+      - echo Setting new image...
+      - kubectl argo rollouts set image $ROLLOUT_NAME $CONTAINER_NAME=$FULL_IMAGE
+
+      - echo Waiting for rollout preview to become healthy...
+      - kubectl argo rollouts status $ROLLOUT_NAME --watch
+
+      # Optional: Smoke test
+      # curl http://brain-task-preview-service.default.svc.cluster.local
+
+      - echo Promoting rollout...
+      - kubectl argo rollouts promote $ROLLOUT_NAME
+
+  post_build:
+    commands:
+      - echo Deployment complete.
