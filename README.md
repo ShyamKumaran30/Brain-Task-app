@@ -1,4 +1,4 @@
-# 🧠 Brain Tasks App — AWS CI/CD & Kubernetes Deployment
+ Brain Tasks App — AWS CI/CD & Kubernetes Deployment
 
 This project demonstrates a complete, production-ready deployment pipeline for the **Brain Tasks App**, a front-end application built with modern web technologies and deployed on **Amazon EKS** using a fully automated **CI/CD pipeline**.
 
@@ -6,7 +6,7 @@ The solution follows DevOps best practices and implements containerization, arti
 
 ---
 
-## 🚀 Project Overview
+#Project Overview
 
 The Brain Tasks App is deployed using:
 
@@ -23,7 +23,7 @@ The application is built and served through a container running **NGINX on port 
 
 ---
 
-## 📦 Features
+##  Features
 
 ### **Application & Containerization**
 - Dockerized React/Vite front-end application  
@@ -49,7 +49,7 @@ The application is built and served through a container running **NGINX on port 
 
 ---
 
-## 🏗️ Architecture Summary
+##  Architecture Summary
 
 The architecture includes:
 
@@ -74,7 +74,7 @@ This setup enables **zero-downtime rolling updates** and fully automated deploym
 
 ---
 
-## 🔄 CI/CD Workflow
+##  CI/CD Workflow
 
 1. Developer pushes a commit to GitHub  
 2. CodePipeline detects changes  
@@ -89,14 +89,15 @@ This setup enables **zero-downtime rolling updates** and fully automated deploym
 
 ---
 
-## 🌐 Public Access
+##  Public Access
 
-After deployment, the application becomes accessible via an **AWS LoadBalancer DNS URL**.  
+After deployment, the application becomes accessible via an **AWS LoadBalancer DNS URL**
+http://a14f023ec69034f9c8b93f6109a82fd2-177865057.us-east-1.elb.amazonaws.com.  
 This URL updates automatically as the Kubernetes Service is recreated or replaced.
 
 ---
 
-## 📜 Deployment Checklist
+##  Deployment Checklist
 
 ### **Repository & Application**
 - Application cloned from GitHub  
@@ -150,7 +151,7 @@ Recommended screenshots for project submission:
 
 ---
 
-## 🎯 Final Status
+##  Final Status
 
 This repository successfully implements:
 
