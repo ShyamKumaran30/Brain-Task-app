@@ -1,6 +1,15 @@
 version: 0.0
-Hooks:
-  AfterInstall:
-    - location: scripts/deploy.sh
+resources:
+  - myEKSApp:
+      type: AWS::EKS::Application
+      properties:
+        clusterName: brain-tasks-eks
+        serviceName: brain-tasks-lb
+        namespace: default
+hooks:
+  BeforeAllowTraffic:
+    - location: scripts/pre_traffic.sh
       timeout: 300
-      runas: root
+  AfterAllowTraffic:
+    - location: scripts/post_traffic.sh
+      timeout: 300
