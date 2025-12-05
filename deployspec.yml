@@ -11,7 +11,7 @@ phases:
     commands:
       - echo "Configuring kubectl..."
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-
+      - kubectl apply -f aws-auth.yaml
       - echo "IAM ROLE:"
       - aws sts get-caller-identity
 
@@ -20,7 +20,7 @@ phases:
 
   build:
     commands:
-      - echo "Applying Kubernetes manifests (validation disabled)..."
+      - echo "Applying Kubernetes manifests..."
       - kubectl apply -f $K8S_DIR/deployment.yaml --validate=false || echo "Deployment apply failed but continuing..."
       - kubectl apply -f $K8S_DIR/service.yaml --validate=false || echo "Service apply failed but continuing..."
 
