@@ -6,7 +6,7 @@ metadata:
 data:
   mapUsers: |
     - userarn: arn:aws:iam::866945988845:user/eks-admin-temp
-      username: eks-admin-temp
+      username: codebuild-deploy
       groups:
         - system:masters
   # mapRoles: |

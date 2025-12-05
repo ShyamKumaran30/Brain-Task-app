@@ -9,28 +9,27 @@ env:
 phases:
   pre_build:
     commands:
-      - echo "Configuring kubectl..."
-      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-      - kubectl apply -f aws-auth.yaml --validate=false
-      - echo "IAM ROLE:"
-      - aws sts get-caller-identity
+      - echo "==== Updating kubeconfig ===="
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
 
-      - echo "Testing Kubernetes access (non-fatal)..."
-      - kubectl get nodes || echo "kubectl get nodes failed, continuing..."
+      - echo "==== Verifying Kubernetes access ===="
+      - kubectl get nodes
 
   build:
     commands:
-      - echo "Applying Kubernetes manifests..."
-      - kubectl apply -f $K8S_DIR/deployment.yaml --validate=false || echo "Deployment apply failed but continuing..."
-      - kubectl apply -f $K8S_DIR/service.yaml --validate=false || echo "Service apply failed but continuing..."
+      - echo "==== Applying Kubernetes Deployment ===="
+      - kubectl apply -f $k8s/deployment.yaml
+
+      - echo "==== Applying Kubernetes Service ===="
+      - kubectl apply -f $k8s/service.yaml
 
   post_build:
     commands:
-      - echo "Deployment complete (checking rollout status)..."
-      - kubectl rollout status deployment/brain-task-app || echo "Rollout check failed but continuing..."
+      - echo "==== Checking rollout status ===="
+      - kubectl rollout status deployment/brain-tasks-app --timeout=120s || true
 
-      - echo "Fetching service info..."
-      - kubectl get svc || true
+      - echo "==== Fetching service endpoints ===="
+      - kubectl get svc
 
 artifacts:
   files:
