@@ -11,7 +11,7 @@ phases:
     commands:
       - echo "Configuring kubectl..."
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-      - kubectl get nodes
+      # - kubectl get nodes
 
   build:
     commands:
