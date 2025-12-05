@@ -11,7 +11,7 @@ phases:
     commands:
       - echo "Configuring kubectl..."
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-      - kubectl apply -f aws-auth.yaml
+      - kubectl apply -f aws-auth.yaml --validate=false
       - echo "IAM ROLE:"
       - aws sts get-caller-identity
 
