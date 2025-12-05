@@ -4,19 +4,24 @@ metadata:
   name: aws-auth
   namespace: kube-system
 data:
-  mapRoles: |
-    - rolearn: arn:aws:iam::866945988845:role/eksctl-brain-tasks-eks-nodegroup-w-NodeInstanceRole-GOGglalXdn7M
-      username: system:node:{{EC2PrivateDNSName}}
-      groups:
-        - system:bootstrappers
-        - system:nodes
-
-    - rolearn: arn:aws:iam::866945988845:role/service-role/codebuild-brain-task-deploy-service-role
-      username: codebuild-deploy
+  mapUsers: |
+    - userarn: arn:aws:iam::866945988845:user/eks-admin-temp
+      username: eks-admin-temp
       groups:
         - system:masters
+  # mapRoles: |
+  #   - rolearn: arn:aws:iam::866945988845:role/eksctl-brain-tasks-eks-nodegroup-w-NodeInstanceRole-GOGglalXdn7M
+  #     username: system:node:{{EC2PrivateDNSName}}
+  #     groups:
+  #       - system:bootstrappers
+  #       - system:nodes
 
-    - rolearn: arn:aws:iam::866945988845:role/service-role/codebuild-brain-task-build-service-role
-      username: codebuild-build
-      groups:
-        - system:masters
+  #   - rolearn: arn:aws:iam::866945988845:role/service-role/codebuild-brain-task-deploy-service-role
+  #     username: codebuild-deploy
+  #     groups:
+  #       - system:masters
+
+  #   - rolearn: arn:aws:iam::866945988845:role/service-role/codebuild-brain-task-build-service-role
+  #     username: codebuild-build
+  #     groups:
+  #       - system:masters

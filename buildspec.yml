@@ -35,5 +35,6 @@ artifacts:
     - k8s/deployment.yaml
     - k8s/service.yaml
     - deployspec.yml
+    - aws-auth.yaml
     - appspec.yml
     - scripts/*
